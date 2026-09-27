@@ -1,0 +1,10 @@
+[
+  {
+    "modid": "mechanica_sync_fixture",
+    "name": "Mechanica Server Sync Fixture",
+    "description": "Подготовка клиентских модов перед подключением к серверу.",
+    "version": "${version}",
+    "mcversion": "1.12.2"
+  }
+]
+

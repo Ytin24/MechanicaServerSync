@@ -1,0 +1,44 @@
+plugins { id 'net.minecraftforge.gradle' version '6.0.54' }
+
+group = 'ru.mechanica'
+version = '1.0.0'
+base { archivesName = 'mechanica-server-sync-forge-1.12.2' }
+java { toolchain { languageVersion = JavaLanguageVersion.of(8) } }
+repositories { mavenCentral() }
+
+sourceSets {
+    main { java.srcDir '../common/src/main/java' }
+    fixture { compileClasspath += sourceSets.main.compileClasspath }
+    checks {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+minecraft { mappings channel: 'stable', version: '39-1.12' }
+dependencies { minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2859' }
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+tasks.withType(ProcessResources).configureEach {
+    inputs.property 'version', project.version
+    filesMatching('mcmod.info') { expand version: project.version }
+}
+jar {
+    manifest.attributes(
+        'FMLCorePlugin': 'ru.mechanica.sync.forge.core.SyncLoadingPlugin',
+        'FMLCorePluginContainsFMLMod': 'true'
+    )
+    finalizedBy 'reobfJar'
+}
+tasks.register('fixtureJar', Jar) {
+    archiveBaseName = 'mechanica-server-sync-fixture-forge-1.12.2'
+    from sourceSets.fixture.output
+    finalizedBy 'reobfFixtureJar'
+}
+reobf { fixtureJar {} }
+tasks.named('assemble') { dependsOn 'fixtureJar' }
+tasks.register('hookChecks', JavaExec) {
+    dependsOn 'checksClasses'
+    classpath = sourceSets.checks.runtimeClasspath
+    mainClass = 'ru.mechanica.sync.forge.core.ConnectTransformerChecks'
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(8) }
+}
+tasks.named('check') { dependsOn 'hookChecks' }

@@ -1,0 +1,38 @@
+plugins { id 'net.neoforged.moddev' version '2.0.147' }
+
+group = 'ru.mechanica'
+version = '1.0.0'
+base { archivesName = 'mechanica-server-sync-neoforge-1.21.1' }
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
+repositories { mavenCentral() }
+
+sourceSets {
+    main { java.srcDir '../common/src/main/java' }
+    fixture
+}
+
+neoForge {
+    version = '21.1.250'
+    addModdingDependenciesTo sourceSets.fixture
+    mods {
+        mechanica_server_sync { sourceSet sourceSets.main }
+        mechanica_sync_fixture { sourceSet sourceSets.fixture }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+
+tasks.withType(ProcessResources).configureEach {
+    inputs.property 'version', project.version
+    filesMatching('META-INF/neoforge.mods.toml') { expand version: project.version }
+}
+
+def fixtureJar = tasks.register('fixtureJar', Jar) {
+    archiveBaseName = 'mechanica-server-sync-fixture-neoforge-1.21.1'
+    from sourceSets.fixture.output
+}
+tasks.named('assemble') { dependsOn fixtureJar }
+

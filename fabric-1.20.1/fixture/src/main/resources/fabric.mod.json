@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "id": "mechanica_sync_fixture",
+  "version": "${version}",
+  "name": "Mechanica Sync Fixture",
+  "environment": "*",
+  "entrypoints": {"main": ["ru.mechanica.sync.fixture.SyncFixture"]},
+  "mixins": ["mechanica-sync-fixture.mixins.json"],
+  "depends": {"fabricloader": ">=0.14.21", "minecraft": "1.20.1", "java": ">=17"}
+}

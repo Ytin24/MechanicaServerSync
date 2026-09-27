@@ -1,0 +1,25 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="mechanica_sync_fixture"
+version="${version}"
+displayName="Mechanica Server Sync Fixture"
+description='''Подготовка клиентских модов перед подключением к серверу.'''
+displayTest="IGNORE_ALL_VERSION"
+
+[[dependencies.mechanica_sync_fixture]]
+modId="forge"
+mandatory=true
+versionRange="[47.4.23,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.mechanica_sync_fixture]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1]"
+ordering="NONE"
+side="BOTH"
+

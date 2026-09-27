@@ -1,0 +1,10 @@
+[
+  {
+    "modid": "mechanica_server_sync",
+    "name": "Mechanica Server Sync",
+    "description": "Подготовка клиентских модов перед подключением к серверу.",
+    "version": "${version}",
+    "mcversion": "1.12.2"
+  }
+]
+

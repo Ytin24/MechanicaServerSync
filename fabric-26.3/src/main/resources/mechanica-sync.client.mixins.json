@@ -1,0 +1,7 @@
+{
+  "required": true,
+  "package": "ru.mechanica.sync.fabric.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": ["ConnectScreenMixin"],
+  "injectors": {"defaultRequire": 1}
+}

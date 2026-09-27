@@ -1,0 +1,25 @@
+license="All Rights Reserved"
+
+[[mods]]
+modId="mechanica_server_sync"
+version="${version}"
+displayName="Mechanica Server Sync"
+description='''Подготовка клиентских модов перед подключением к серверу.'''
+
+[[dependencies.mechanica_server_sync]]
+modId="neoforge"
+type="required"
+versionRange="[26.3.0.23-beta,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.mechanica_server_sync]]
+modId="minecraft"
+type="required"
+versionRange="[26.3]"
+ordering="NONE"
+side="BOTH"
+
+[[mixins]]
+config="mechanica-sync.client.mixins.json"
+

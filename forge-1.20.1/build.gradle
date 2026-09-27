@@ -1,0 +1,50 @@
+plugins { id 'net.neoforged.moddev.legacyforge' version '2.0.147' }
+
+group = 'ru.mechanica'
+version = '1.0.0'
+base { archivesName = 'mechanica-server-sync-forge-1.20.1' }
+java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }
+repositories { mavenCentral() }
+
+sourceSets {
+    main { java.srcDir '../common/src/main/java' }
+    fixture
+}
+java.registerFeature('fixture') { usingSourceSet(sourceSets.fixture) }
+
+legacyForge {
+    enable {
+        forgeVersion = '1.20.1-47.4.23'
+        disableRecompilation = true
+    }
+    addModdingDependenciesTo sourceSets.fixture
+    mods {
+        mechanica_server_sync { sourceSet sourceSets.main }
+        mechanica_sync_fixture { sourceSet sourceSets.fixture }
+    }
+}
+
+dependencies { annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' }
+mixin {
+    add sourceSets.main, 'mechanica-sync.refmap.json'
+    config 'mechanica-sync.client.mixins.json'
+}
+jar { manifest.attributes('MixinConfigs': 'mechanica-sync.client.mixins.json') }
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 17
+}
+
+tasks.withType(ProcessResources).configureEach {
+    inputs.property 'version', project.version
+    filesMatching('META-INF/mods.toml') { expand version: project.version }
+}
+
+def fixtureJar = tasks.named('fixtureJar', Jar) {
+    archiveBaseName = 'mechanica-server-sync-fixture-forge-1.20.1'
+    archiveClassifier = ''
+}
+obfuscation { reobfuscate(fixtureJar, sourceSets.fixture) }
+tasks.named('reobfFixtureJar') { dependsOn 'compileJava' }
+tasks.named('assemble') { dependsOn fixtureJar }

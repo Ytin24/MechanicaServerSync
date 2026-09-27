@@ -1,0 +1,49 @@
+name: Build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: |
+            8
+            17
+            25
+            21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          validate-wrappers: true
+
+      - name: Check, build and package
+        run: ./scripts/Build.ps1 -JavaHome "$env:JAVA_HOME_21_X64" -Java25Home "$env:JAVA_HOME_25_X64"
+
+      - name: Upload mod packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: mechanica-server-sync
+          path: |
+            dist/*.jar
+            dist/manifest.json
+          if-no-files-found: error

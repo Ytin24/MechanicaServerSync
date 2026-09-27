@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "ru.mechanica.sync.forge.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "mechanica-sync.refmap.json",
+  "client": [
+    "ConnectScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+

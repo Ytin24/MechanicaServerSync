@@ -1,0 +1,7 @@
+.gradle/
+dist/
+out/
+build/
+run/
+fixture/build/
+fixture/run/

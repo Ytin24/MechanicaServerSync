@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "mechanica_server_sync",
+  "version": "${version}",
+  "name": "Mechanica Server Sync",
+  "description": "Подготовка клиентских модов перед подключением к серверу.",
+  "environment": "*",
+  "entrypoints": {
+    "client": ["ru.mechanica.sync.fabric.ClientBridge"],
+    "server": ["ru.mechanica.sync.fabric.ServerBridge"]
+  },
+  "mixins": [
+    {"config": "mechanica-sync.client.mixins.json", "environment": "client"},
+    {"config": "mechanica-sync.server.mixins.json", "environment": "server"}
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "26.3",
+    "java": ">=25"
+  }
+}

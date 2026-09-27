@@ -1,0 +1,7 @@
+{
+  "required": true,
+  "package": "ru.mechanica.sync.fabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": ["MinecraftServerMixin"],
+  "injectors": {"defaultRequire": 1}
+}

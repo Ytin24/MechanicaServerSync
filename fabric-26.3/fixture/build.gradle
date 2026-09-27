@@ -1,0 +1,22 @@
+plugins { id 'net.fabricmc.fabric-loom' }
+
+base { archivesName = 'mechanica-server-sync-fabric-26.3-fixture' }
+repositories { mavenCentral() }
+
+dependencies {
+    minecraft 'com.mojang:minecraft:26.3'
+    implementation 'net.fabricmc:fabric-loader:0.19.5'
+}
+
+sourceSets.main.java.srcDir '../../fabric-common/src/fixture/java'
+
+java { toolchain { languageVersion = JavaLanguageVersion.of(25) } }
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 25
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') { expand version: project.version }
+}

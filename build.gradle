@@ -1,0 +1,56 @@
+plugins {
+    id 'fabric-loom' version '1.13.6'
+}
+
+allprojects {
+    group = 'ru.mechanica'
+    version = '1.0.0'
+}
+
+base { archivesName = 'mechanica-server-sync-fabric-1.21.1' }
+
+repositories { mavenCentral() }
+
+dependencies {
+    minecraft 'com.mojang:minecraft:1.21.1'
+    mappings 'net.fabricmc:yarn:1.21.1+build.3:v2'
+    modImplementation 'net.fabricmc:fabric-loader:0.19.3'
+}
+
+sourceSets {
+    main.java.srcDir 'common/src/main/java'
+    main.java.srcDir 'fabric-common/src/main/java'
+    checks {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') { expand version: project.version }
+}
+
+tasks.register('bridgeChecks', JavaExec) {
+    dependsOn checksClasses
+    classpath = sourceSets.checks.runtimeClasspath
+    mainClass = 'ru.mechanica.sync.BridgeChecks'
+}
+
+check.dependsOn bridgeChecks, ':common:compileJava'
+
+tasks.register('legacyBridgeCopy', Copy) {
+    dependsOn remapJar
+    from remapJar.archiveFile
+    into layout.buildDirectory.dir('libs')
+    rename { 'mechanica-server-sync-1.0.0.jar' }
+}
+
+build.dependsOn legacyBridgeCopy

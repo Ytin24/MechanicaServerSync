@@ -1,0 +1,43 @@
+plugins {
+    id 'net.minecraftforge.gradle' version '6.0.54'
+    id 'org.spongepowered.mixin' version '0.7.38'
+}
+
+group = 'ru.mechanica'
+version = '1.0.0'
+base { archivesName = 'mechanica-server-sync-forge-1.16.5' }
+java { toolchain { languageVersion = JavaLanguageVersion.of(8) } }
+repositories { mavenCentral() }
+
+sourceSets {
+    main { java.srcDir '../common/src/main/java' }
+    fixture {
+        compileClasspath += sourceSets.main.compileClasspath
+    }
+}
+
+minecraft { mappings channel: 'official', version: '1.16.5' }
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.16.5-36.2.34'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+mixin {
+    add sourceSets.main, 'mechanica-sync.refmap.json'
+}
+
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+tasks.withType(ProcessResources).configureEach {
+    inputs.property 'version', project.version
+    filesMatching('META-INF/mods.toml') { expand version: project.version }
+}
+jar {
+    manifest.attributes('MixinConfigs': 'mechanica-sync.client.mixins.json')
+    finalizedBy 'reobfJar'
+}
+tasks.register('fixtureJar', Jar) {
+    archiveBaseName = 'mechanica-server-sync-fixture-forge-1.16.5'
+    from sourceSets.fixture.output
+    finalizedBy 'reobfFixtureJar'
+}
+reobf { fixtureJar {} }
+tasks.named('assemble') { dependsOn 'fixtureJar' }

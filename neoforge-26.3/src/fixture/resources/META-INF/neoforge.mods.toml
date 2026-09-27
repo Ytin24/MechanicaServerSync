@@ -1,0 +1,22 @@
+license="All Rights Reserved"
+
+[[mods]]
+modId="mechanica_sync_fixture"
+version="${version}"
+displayName="Mechanica Server Sync Fixture"
+description='''Подготовка клиентских модов перед подключением к серверу.'''
+
+[[dependencies.mechanica_sync_fixture]]
+modId="neoforge"
+type="required"
+versionRange="[26.3.0.23-beta,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.mechanica_sync_fixture]]
+modId="minecraft"
+type="required"
+versionRange="[26.3]"
+ordering="NONE"
+side="BOTH"
+
