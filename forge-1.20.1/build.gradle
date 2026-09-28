@@ -1,7 +1,7 @@
 plugins { id 'net.neoforged.moddev.legacyforge' version '2.0.147' }
 
 group = 'ru.mechanica'
-version = '1.0.0'
+version = '1.0.1'
 base { archivesName = 'mechanica-server-sync-forge-1.20.1' }
 java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }
 repositories { mavenCentral() }

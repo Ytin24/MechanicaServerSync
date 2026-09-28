@@ -2,7 +2,7 @@ plugins { id 'net.fabricmc.fabric-loom' version '1.17.5' }
 
 allprojects {
     group = 'ru.mechanica'
-    version = '1.0.0'
+    version = '1.0.1'
 }
 
 base { archivesName = 'mechanica-server-sync-fabric-26.3' }

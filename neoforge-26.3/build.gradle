@@ -1,7 +1,7 @@
 plugins { id 'net.neoforged.moddev' version '2.0.147' }
 
 group = 'ru.mechanica'
-version = '1.0.0'
+version = '1.0.1'
 base { archivesName = 'mechanica-server-sync-neoforge-26.3' }
 java { toolchain { languageVersion = JavaLanguageVersion.of(25) } }
 repositories { mavenCentral() }
@@ -35,4 +35,3 @@ def fixtureJar = tasks.register('fixtureJar', Jar) {
     from sourceSets.fixture.output
 }
 tasks.named('assemble') { dependsOn fixtureJar }
-

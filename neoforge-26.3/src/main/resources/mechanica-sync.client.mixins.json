@@ -3,6 +3,9 @@
   "minVersion": "0.8",
   "package": "ru.mechanica.sync.neoforge.mixin",
   "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "StatusResponseMixin"
+  ],
   "client": [
     "ConnectScreenMixin"
   ],
@@ -10,4 +13,3 @@
     "defaultRequire": 1
   }
 }
-

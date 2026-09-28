@@ -28,7 +28,7 @@ tasks.register('legacyFixtureCopy', Copy) {
     dependsOn remapJar
     from remapJar.archiveFile
     into layout.buildDirectory.dir('libs')
-    rename { 'mechanica-server-sync-fixture-1.0.0.jar' }
+    rename { 'mechanica-server-sync-fixture-1.0.1.jar' }
 }
 
 build.dependsOn legacyFixtureCopy

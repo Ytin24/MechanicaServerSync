@@ -4,6 +4,9 @@
   "package": "ru.mechanica.sync.forge.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "mechanica-sync.refmap.json",
+  "mixins": [
+    "StatusResponseMixin"
+  ],
   "client": [
     "ConnectScreenMixin"
   ],
@@ -11,4 +14,3 @@
     "defaultRequire": 1
   }
 }
-

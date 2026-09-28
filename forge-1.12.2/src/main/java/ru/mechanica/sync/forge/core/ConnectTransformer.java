@@ -4,6 +4,7 @@ import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.InsnList;
@@ -17,7 +18,9 @@ import org.objectweb.asm.tree.VarInsnNode;
 public final class ConnectTransformer implements IClassTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes) {
-        if (!"net.minecraft.client.multiplayer.GuiConnecting".equals(transformedName) || bytes == null) return bytes;
+        if (bytes == null) return null;
+        if ("net.minecraft.network.status.server.SPacketServerInfo".equals(transformedName)) return transformStatus(bytes);
+        if (!"net.minecraft.client.multiplayer.GuiConnecting".equals(transformedName)) return bytes;
         ClassNode type = new ClassNode();
         new ClassReader(bytes).accept(type, 0);
         int changed = 0;
@@ -43,5 +46,30 @@ public final class ConnectTransformer implements IClassTransformer {
         type.accept(writer);
         return writer.toByteArray();
     }
-}
 
+    private static byte[] transformStatus(byte[] bytes) {
+        ClassNode type = new ClassNode();
+        new ClassReader(bytes).accept(type, 0);
+        int changed = 0;
+        for (MethodNode method : type.methods) {
+            if (!(method.name.equals("writePacketData") || method.name.equals("func_148840_b"))
+                || !method.desc.equals("(Lnet/minecraft/network/PacketBuffer;)V")) continue;
+            for (AbstractInsnNode instruction : method.instructions.toArray()) {
+                if (!(instruction instanceof MethodInsnNode)) continue;
+                MethodInsnNode call = (MethodInsnNode) instruction;
+                if (call.getOpcode() != Opcodes.INVOKEVIRTUAL
+                    || !call.owner.equals("net/minecraft/network/PacketBuffer")
+                    || !(call.name.equals("writeString") || call.name.equals("func_180714_a"))
+                    || !call.desc.equals("(Ljava/lang/String;)Lnet/minecraft/network/PacketBuffer;")) continue;
+                method.instructions.insertBefore(call, new MethodInsnNode(Opcodes.INVOKESTATIC,
+                    "ru/mechanica/sync/server/StatusAdvertisement", "decorate",
+                    "(Ljava/lang/String;)Ljava/lang/String;", false));
+                changed++;
+            }
+        }
+        if (changed != 1) throw new IllegalStateException("mechanica_status_hook_missing");
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        type.accept(writer);
+        return writer.toByteArray();
+    }
+}

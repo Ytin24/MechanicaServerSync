@@ -1,7 +1,7 @@
 plugins { id 'net.minecraftforge.gradle' version '6.0.54' }
 
 group = 'ru.mechanica'
-version = '1.0.0'
+version = '1.0.1'
 base { archivesName = 'mechanica-server-sync-forge-1.12.2' }
 java { toolchain { languageVersion = JavaLanguageVersion.of(8) } }
 repositories { mavenCentral() }

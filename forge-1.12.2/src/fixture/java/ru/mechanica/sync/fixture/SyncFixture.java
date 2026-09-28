@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = "mechanica_sync_fixture", name = "Mechanica Server Sync Fixture", version = "1.0.0",
+@Mod(modid = "mechanica_sync_fixture", name = "Mechanica Server Sync Fixture", version = "1.0.1",
      acceptedMinecraftVersions = "[1.12.2]", acceptableRemoteVersions = "*")
 public final class SyncFixture {
     public static final Logger LOGGER = LogManager.getLogger("MechanicaSyncFixture");
@@ -24,4 +24,3 @@ public final class SyncFixture {
         LOGGER.info("MECHANICA_SYNC_FIXTURE_SERVER_JOIN");
     }
 }
-

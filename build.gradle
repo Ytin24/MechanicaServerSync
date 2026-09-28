@@ -4,7 +4,7 @@ plugins {
 
 allprojects {
     group = 'ru.mechanica'
-    version = '1.0.0'
+    version = '1.0.1'
 }
 
 base { archivesName = 'mechanica-server-sync-fabric-1.21.1' }
@@ -50,7 +50,7 @@ tasks.register('legacyBridgeCopy', Copy) {
     dependsOn remapJar
     from remapJar.archiveFile
     into layout.buildDirectory.dir('libs')
-    rename { 'mechanica-server-sync-1.0.0.jar' }
+    rename { 'mechanica-server-sync-1.0.1.jar' }
 }
 
 build.dependsOn legacyBridgeCopy

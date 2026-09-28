@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'ru.mechanica'
-version = '1.0.0'
+version = '1.0.1'
 base { archivesName = 'mechanica-server-sync-forge-1.16.5' }
 java { toolchain { languageVersion = JavaLanguageVersion.of(8) } }
 repositories { mavenCentral() }

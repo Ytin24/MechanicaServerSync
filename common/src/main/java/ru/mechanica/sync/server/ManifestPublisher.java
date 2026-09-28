@@ -52,6 +52,7 @@ public final class ManifestPublisher implements AutoCloseable {
     private final Consumer<String> log;
     private HttpServer server;
     private ThreadPoolExecutor executor;
+    private StatusAdvertisement.Registration statusRegistration;
 
     public ManifestPublisher(Path gameDirectory, ServerConfig config, Consumer<String> log) throws IOException {
         this.config = config;
@@ -146,6 +147,7 @@ public final class ManifestPublisher implements AutoCloseable {
             server.setExecutor(executor);
             server.createContext("/", this::handle);
             server.start();
+            statusRegistration = StatusAdvertisement.register(config.url("/mechanica/descriptor.json"));
             log.accept("MECHANICA_SYNC_SERVER_READY url=" + config.url("/mechanica/descriptor.json"));
         } catch (IOException | RuntimeException ex) {
             close();
@@ -290,6 +292,8 @@ public final class ManifestPublisher implements AutoCloseable {
 
     @Override
     public synchronized void close() {
+        StatusAdvertisement.unregister(statusRegistration);
+        statusRegistration = null;
         if (server != null) {
             server.stop(0);
             server = null;

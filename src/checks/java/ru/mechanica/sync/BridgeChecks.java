@@ -29,6 +29,8 @@ import ru.mechanica.sync.ipc.BridgeProtocol;
 import ru.mechanica.sync.ipc.FrameCodec;
 import ru.mechanica.sync.server.ManifestPublisher;
 import ru.mechanica.sync.server.ServerConfig;
+import ru.mechanica.sync.server.StatusAdvertisement;
+import ru.mechanica.sync.server.StatusAdvertisementChecks;
 
 public final class BridgeChecks {
     private static int checks;
@@ -36,6 +38,7 @@ public final class BridgeChecks {
     public static void main(String[] args) throws Exception {
         framing();
         protocol();
+        checks += StatusAdvertisementChecks.run();
         publisher();
         System.out.println("Mechanica bridge checks: " + checks + " passed");
     }
@@ -142,8 +145,17 @@ public final class BridgeChecks {
             CopyOnWriteArrayList<String> log = new CopyOnWriteArrayList<>();
             try (ManifestPublisher publisher = new ManifestPublisher(game, config, log::add);
                  HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).followRedirects(HttpClient.Redirect.NEVER).build()) {
+                check(StatusAdvertisement.decorate("{}") == "{}", "unstarted publisher does not advertise");
                 publisher.start();
                 String base = "http://127.0.0.1:" + port;
+                JsonObject advertised = JsonCodec.decode(StatusAdvertisement.decorate("{}").getBytes(StandardCharsets.UTF_8), 4096);
+                check(JsonCodec.string(advertised.getAsJsonObject("mechanica"), "descriptorUrl").equals(base + "/mechanica/descriptor.json"),
+                    "started publisher advertises its descriptor");
+                try (ManifestPublisher conflicting = new ManifestPublisher(game, config, log::add)) {
+                    fails(conflicting::start, "failed bind does not publish");
+                    check(StatusAdvertisement.decorate("{}").equals(new String(JsonCodec.encode(advertised), StandardCharsets.UTF_8)),
+                        "failed publisher does not remove running publisher advertisement");
+                }
                 HttpResponse<byte[]> descriptorResponse = get(http, base + "/mechanica/descriptor.json");
                 check(descriptorResponse.statusCode() == 200, "descriptor served");
                 JsonObject descriptor = JsonCodec.decode(descriptorResponse.body(), ServerConfig.MAXIMUM_JSON_BYTES);
@@ -170,6 +182,7 @@ public final class BridgeChecks {
                 check(log.stream().filter(line -> line.startsWith("MECHANICA_SYNC_FILE_REQUEST")).count() == 1, "only valid served file logged");
                 check(log.stream().anyMatch(line -> line.startsWith("MECHANICA_SYNC_SERVER_READY")), "server readiness marker");
             }
+            check(StatusAdvertisement.decorate("{}") == "{}", "stopped publisher no longer advertises");
         } finally {
             try (var paths = Files.walk(game)) {
                 for (Path path : paths.sorted(Comparator.reverseOrder()).toList()) {

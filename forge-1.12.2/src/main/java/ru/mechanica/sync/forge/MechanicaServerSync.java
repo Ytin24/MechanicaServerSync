@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import ru.mechanica.sync.server.ManifestPublisher;
 import ru.mechanica.sync.server.ServerConfig;
 
-@Mod(modid = "mechanica_server_sync", name = "Mechanica Server Sync", version = "1.0.0",
+@Mod(modid = "mechanica_server_sync", name = "Mechanica Server Sync", version = "1.0.1",
      acceptedMinecraftVersions = "[1.12.2]", acceptableRemoteVersions = "*")
 public final class MechanicaServerSync {
     private static final Logger LOGGER = LogManager.getLogger("MechanicaServerSync");

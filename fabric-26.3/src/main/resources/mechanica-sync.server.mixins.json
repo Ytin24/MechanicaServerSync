@@ -2,6 +2,6 @@
   "required": true,
   "package": "ru.mechanica.sync.fabric.mixin",
   "compatibilityLevel": "JAVA_25",
-  "mixins": ["DedicatedServerShutdownMixin"],
+  "mixins": ["DedicatedServerShutdownMixin", "StatusResponseMixin"],
   "injectors": {"defaultRequire": 1}
 }

@@ -2,6 +2,6 @@
   "required": true,
   "package": "ru.mechanica.sync.fabric.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": ["MinecraftServerMixin"],
+  "mixins": ["MinecraftServerMixin", "StatusResponseMixin"],
   "injectors": {"defaultRequire": 1}
 }
