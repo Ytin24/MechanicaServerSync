@@ -30,6 +30,7 @@ import ru.mechanica.sync.ipc.FrameCodec;
 import ru.mechanica.sync.server.ManifestPublisher;
 import ru.mechanica.sync.server.ServerConfig;
 import ru.mechanica.sync.server.StatusAdvertisement;
+import ru.mechanica.sync.server.AutoConfigChecks;
 import ru.mechanica.sync.server.StatusAdvertisementChecks;
 
 public final class BridgeChecks {
@@ -39,6 +40,7 @@ public final class BridgeChecks {
         framing();
         protocol();
         checks += StatusAdvertisementChecks.run();
+        checks += AutoConfigChecks.run();
         publisher();
         System.out.println("Mechanica bridge checks: " + checks + " passed");
     }

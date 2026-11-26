@@ -11,6 +11,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.mechanica.sync.server.AutoConfig;
 import ru.mechanica.sync.server.ManifestPublisher;
 import ru.mechanica.sync.server.ServerConfig;
 
@@ -33,13 +34,10 @@ public final class MechanicaServerSync {
             return;
         }
         try {
-            ServerConfig config = ServerConfig.read(configuration);
             String runtimeLoader = ModList.get().getModContainerById("neoforge").orElseThrow()
                 .getModInfo().getVersion().toString();
-            if (!"neoforge".equals(config.loader()) || !runtimeLoader.equals(config.loaderVersion())
-                || !SharedConstants.getCurrentVersion().getName().equals(config.minecraft())) {
-                throw new IllegalStateException("server_target_mismatch");
-            }
+            ServerConfig config = AutoConfig.load(configuration, FMLPaths.GAMEDIR.get(),
+                new AutoConfig.Runtime("neoforge", SharedConstants.getCurrentVersion().getName(), runtimeLoader), LOGGER::info);
             publisher = new ManifestPublisher(FMLPaths.GAMEDIR.get(), config, LOGGER::info);
             publisher.start();
             Runtime.getRuntime().addShutdownHook(new Thread(MechanicaServerSync::stop, "Mechanica sync shutdown"));

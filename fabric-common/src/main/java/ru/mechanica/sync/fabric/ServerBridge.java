@@ -8,6 +8,7 @@ import net.fabricmc.loader.api.ModContainer;
 import java.util.Optional;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import ru.mechanica.sync.server.AutoConfig;
 import ru.mechanica.sync.server.ManifestPublisher;
 import ru.mechanica.sync.server.ServerConfig;
 
@@ -23,7 +24,6 @@ public final class ServerBridge implements DedicatedServerModInitializer {
             return;
         }
         try {
-            ServerConfig config = ServerConfig.read(configuration);
             Optional<ModContainer> quilt = loader.getModContainer("quilt_loader");
             String loaderName = quilt.isPresent() ? "quilt" : "fabric";
             ModContainer runtimeLoader = quilt.orElseGet(() -> loader.getModContainer("fabricloader").orElseThrow(() -> new IllegalStateException("loader_missing")));
@@ -31,9 +31,8 @@ public final class ServerBridge implements DedicatedServerModInitializer {
                 .getMetadata().getVersion().getFriendlyString();
             String currentMinecraft = loader.getModContainer("minecraft").orElseThrow(() -> new IllegalStateException("minecraft_missing"))
                 .getMetadata().getVersion().getFriendlyString();
-            if (!config.loader().equals(loaderName) || !config.loaderVersion().equals(currentLoader) || !config.minecraft().equals(currentMinecraft)) {
-                throw new IllegalStateException("server_target_mismatch");
-            }
+            ServerConfig config = AutoConfig.load(configuration, loader.getGameDir(),
+                new AutoConfig.Runtime(loaderName, currentMinecraft, currentLoader), LOGGER::info);
             publisher = new ManifestPublisher(loader.getGameDir(), config, LOGGER::info);
             publisher.start();
             Runtime.getRuntime().addShutdownHook(new Thread(ServerBridge::stop, "Mechanica sync shutdown"));

@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.mechanica.sync.server.AutoConfig;
 import ru.mechanica.sync.server.ManifestPublisher;
 import ru.mechanica.sync.server.ServerConfig;
 
@@ -32,11 +33,8 @@ public final class MechanicaServerSync {
     public void starting(FMLServerStartingEvent event) {
         if (!event.getServer().isDedicatedServer() || !Files.exists(configuration)) return;
         try {
-            ServerConfig config = ServerConfig.read(configuration);
-            if (!"forge".equals(config.loader()) || !ForgeVersion.getVersion().equals(config.loaderVersion())
-                || !Loader.MC_VERSION.equals(config.minecraft())) {
-                throw new IllegalStateException("server_target_mismatch");
-            }
+            ServerConfig config = AutoConfig.load(configuration, gameDir,
+                new AutoConfig.Runtime("forge", Loader.MC_VERSION, ForgeVersion.getVersion()), LOGGER::info);
             publisher = new ManifestPublisher(gameDir, config, LOGGER::info);
             publisher.start();
             Runtime.getRuntime().addShutdownHook(new Thread(MechanicaServerSync::stop, "Mechanica sync shutdown"));
